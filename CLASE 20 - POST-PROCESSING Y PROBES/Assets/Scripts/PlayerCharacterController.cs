@@ -25,6 +25,7 @@ public class PlayerCharacterController : MonoBehaviour
     //EVENTS
     public static event Action onDeath;
     public static event Action<int> onLivesChange;
+    public static event Action<bool> onFireChange;
 
     private void Start()
     {
@@ -99,7 +100,7 @@ public class PlayerCharacterController : MonoBehaviour
         {
             lifePlayer++;
             onLivesChange?.Invoke(lifePlayer);
-            Destroy(other.gameObject);
+            //Destroy(other.gameObject);
         }
 
         if (other.gameObject.CompareTag("Enemy"))
@@ -119,21 +120,36 @@ public class PlayerCharacterController : MonoBehaviour
             if (fireTrigger.isStopped)
             {
                 fireTrigger.Play();
+                onFireChange?.Invoke(true);
             }
         }
 
+    }
+
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.CompareTag("Fire"))
+        {
+            ParticleSystem fireTrigger = other.gameObject.GetComponent<ParticleSystem>();
+            if (fireTrigger.isPlaying)
+            {
+                fireTrigger.Stop();
+                Debug.Log("STOP");
+                onFireChange?.Invoke(false);
+            }
+        }
     }
 
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
         if (hit.gameObject.CompareTag("Ground"))
         {
-            if (fireParticle.isPlaying){
+            if (fireParticle.isPlaying)
+            {
                 fireParticle.Stop();
                 trailPlayer.SetActive(false);
             }
         }
     }
-    
-
 }

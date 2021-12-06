@@ -9,7 +9,7 @@ public class CamerasController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-       
+        ConsoleController.onConsoleChange += SwitchCameras; 
     }
 
     // Update is called once per frame
